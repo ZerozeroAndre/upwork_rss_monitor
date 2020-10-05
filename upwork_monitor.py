@@ -70,9 +70,13 @@ def bot_sendtext(bot_message):
 	requests.get(send_text)	
 
 
-d = feedparser.parse(rss_url)
+
+
+job_buffer = []
 
 while True:
+	
+	d = feedparser.parse(rss_url)
 	
 	for i in d.entries:
 		# calculations
@@ -80,6 +84,7 @@ while True:
 		# Title 
 		title_message = h.handle(i['title'])[:-11]
 		title_message = title_message.upper()
+		
 		
 		
 		# Money 
@@ -151,11 +156,17 @@ while True:
 		
 		# telegram notification 
 		# conditions 
-		if delta < 20 and delta > 0:
+		
+
+		
+		if title_message not in job_buffer:
+			job_buffer.append(title_message)
+			print('ok')
 			if len(money) == 2:
 				money_digit = float(price_str(money[1]))
 				
-				if money_digit > 30:
+				print(money_digit)
+				if money_digit >= 30:
 					bot_message = ("%s,  %s, %s, %s " % (title_message, money[0], money[1], cleaned_string))
 					#bot_message = "{0}, {1}, {2}, {3}".fomrat(title_message, money[0], money[1], cleaned_string)	
 					bot_sendtext(bot_message)
@@ -169,10 +180,14 @@ while True:
 					
 			else:
 				pass
+		if title_message in job_buffer:
+
+			print("not ok")
+			pass 
  
 
 
 			
 		
 		print("_______________________________________________________________")
-		time.sleep(10)
+		time.sleep(3)
