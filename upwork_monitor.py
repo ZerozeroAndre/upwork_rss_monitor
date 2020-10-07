@@ -93,10 +93,15 @@ while True:
 		money = re.findall(r, soup.text)
 		cleaned_string = preclean_input_text(soup.text)
 		
-		# Clean date 
-		job_time_published = list(parse_date_information(cleaned_string))[-1] 
-		job_time_published_date = job_time_published.date()
-		job_time_published_time = job_time_published.time()
+		# Clean date
+		try:	
+			job_time_published = list(parse_date_information(cleaned_string))[-1] 
+			job_time_published_date = job_time_published.date()
+			job_time_published_time = job_time_published.time()
+		except TypeError:
+			job_time_published_date = datetime.datetime.now().date()
+			job_time_published_time = datetime.datetime.now().time()
+			
 		
 		# Greenwich time 
 		tz = pytz.timezone('Etc/Greenwich')
