@@ -23,10 +23,6 @@ import requests
 colorama.init()
 
 
-
-
-
-
 class bcolors:
     HEADER = '\033[95m'
     OKBLUE = '\033[94m'
@@ -36,7 +32,6 @@ class bcolors:
     ENDC = '\033[0m'
     BOLD = '\033[1m'
     UNDERLINE = '\033[4m'
-
 
 
 
@@ -70,8 +65,6 @@ def bot_sendtext(bot_message):
 	send_text = 'https://api.telegram.org/bot' + bot_token + '/sendMessage?chat_id=' + bot_chatID + '&parse_mode=Markdown&text=' + bot_message
  
 	requests.get(send_text)	
-
-
 
 
 job_buffer = []
@@ -112,13 +105,14 @@ while True:
 		# Current time 
 		now = datetime.datetime.now()
 		
-		# Difference
+		# Time Difference
 		hours_to_minutes = job_time_published_time.hour * 60
 		published_minutes = job_time_published_time.minute + hours_to_minutes
 		greenwich_now_to_minutes = Greenwich_now.hour * 60
 		greenwich_minutes = Greenwich_now.minute + greenwich_now_to_minutes
 		delta = greenwich_minutes - published_minutes
 		print("\n" * 5)
+		
 		#new_notification 
 		if delta < 25:
 			new_notification = "-------------------------------NEW-------------------------------"
@@ -127,13 +121,6 @@ while True:
 			pass
 		
 		
-		
-		
-		print("Delta")
-		print(delta)
-		
-
-	
 		print("Title")
 		#print("--------------------------------------------------")
 		cprint(title_message, 'red')
@@ -160,59 +147,41 @@ while True:
 		cprint(job_time_published_date, 'yellow')
 		cprint(job_time_published_time, 'yellow')
 		
-		# data gathering 
-		
-		df = pd.read_csv("upwork_base.csv")
-		
-		if len(money) == 2:
-			row_1 = {'date': job_time_published_date, 'time': job_time_published_time, 'title': title_message, 'message': cleaned_string, 'fix_price': np.nan, 'price_min': money[0], 'price_max': money[1]}
-			
-			df = df.append(row_1, ignore_index=True)
-			df.to_csv("upwork_base.csv", index=False)
-			
-		if len(money) == 1:
-			row_2 = {'date': job_time_published_date, 'time': job_time_published_time, 'title': title_message, 'message': cleaned_string, 'fix_price': money[0], 'price_min': np.nan, 'price_max': np.nan}
-			df = df.append(row_2, ignore_index=True)
-			df.to_csv("upwork_base.csv", index=False)
-		if len(money) == 0:
-			row_3 = {'date': job_time_published_date, 'time': job_time_published_time, 'title': title_message, 'message': cleaned_string, 'fix_price': np.nan, 'price_min': np.nan, 'price_max': np.nan}
-			df = df.append(row_2, ignore_index=True)
-			df.to_csv("upwork_base.csv", index=False)
-			
-		
-		
-		
-		
-		
-		
-		# machine learning module
-		
-		
-		
-		
 		# telegram notification 
 		# conditions 
 		
-
+		df = pd.read_csv("upwork_base.csv")
 		
 		if title_message not in job_buffer:
 			job_buffer.append(title_message)
 			print('ok')
 			if len(money) == 2:
 				money_digit = float(price_str(money[1]))
+				row_1 = {'date': job_time_published_date, 'time': job_time_published_time, 'title': title_message, 'message': cleaned_string, 'fix_price': np.nan, 'price_min': money[0], 'price_max': money[1]}
+				df = df.append(row_1, ignore_index=True)
+				df.to_csv("upwork_base.csv", index=False)
 				
 				print(money_digit)
 				if money_digit >= 30:
 					bot_message = ("%s,  %s, %s, %s " % (title_message, money[0], money[1], cleaned_string))
 					#bot_message = "{0}, {1}, {2}, {3}".fomrat(title_message, money[0], money[1], cleaned_string)	
 					bot_sendtext(bot_message)
+					
 
 			if len(money) == 1:
+				row_2 = {'date': job_time_published_date, 'time': job_time_published_time, 'title': title_message, 'message': cleaned_string, 'fix_price': money[0], 'price_min': np.nan, 'price_max': np.nan}
+				df = df.append(row_2, ignore_index=True)
+				df.to_csv("upwork_base.csv", index=False)
 
 				money_digit = float(price_str(money[0]))
 				if money_digit > 500:
 					bot_message = ("%s,  %s,  %s " % (title_message, money[0], cleaned_string))
 					bot_sendtext(bot_message)
+					
+			if len(money) == 0:
+				row_3 = {'date': job_time_published_date, 'time': job_time_published_time, 'title': title_message, 'message': cleaned_string, 'fix_price': np.nan, 'price_min': np.nan, 'price_max': np.nan}
+				df = df.append(row_2, ignore_index=True)
+				df.to_csv("upwork_base.csv", index=False)
 					
 			else:
 				pass
@@ -221,9 +190,5 @@ while True:
 			print("not ok")
 			pass 
  
-
-
-			
-		
 		print("_______________________________________________________________")
 		time.sleep(3)
