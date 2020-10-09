@@ -17,6 +17,8 @@ import telegram
 from money_parser import price_str
 import numpy as np
 import pandas as pd
+import keyword
+from nltk import word_tokenize
 
 
 import requests
@@ -78,6 +80,10 @@ upper_hour_price_filter = input("Upper price limit per hour to filter vacancies 
 fix_price_filter = int(fix_price_filter)
 lower_hour_price_filter = int(lower_hour_price_filter)
 upper_hour_price_filter = int(upper_hour_price_filter)
+
+
+
+
 
 
 while True:
@@ -154,6 +160,14 @@ while True:
 		#time 
 		
 		print(cleaned_string)
+		
+		# search keyword 
+		tokens = word_tokenize(cleaned_string)
+		tokens_title = word_tokenize(title_message)
+	
+		tokens.extend(tokens_title)
+		print(type(tokens))
+		print(tokens) 
 		
 		cprint(job_time_published_date, 'yellow')
 		cprint(job_time_published_time, 'yellow')
