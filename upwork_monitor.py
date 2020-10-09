@@ -3,8 +3,8 @@ import feedparser
 import html2text
 import re
 import re as regex
-from bs4 import BeautifulSoup          
-from bs4 import BeautifulStoneSoup     
+from bs4 import BeautifulSoup          # For processing HTML
+from bs4 import BeautifulStoneSoup     # For processing XML
 import bs4   
 import time  
 from termcolor import colored, cprint
@@ -35,7 +35,7 @@ class bcolors:
 
 
 
-rss_url =""
+rss_url = ""
 
 h = html2text.HTML2Text()
 h.ignore_links = True
@@ -62,13 +62,23 @@ def bot_sendtext(bot_message):
 	### Send text message
 	bot_token = ''
 	bot_chatID = ''
-	send_text = 'https://api.telegram.org/bot' + bot_token + '/sendMessage?chat_id=' 
-				+ bot_chatID + '&parse_mode=Markdown&text=' + bot_message
+	send_text = 'https://api.telegram.org/bot' + bot_token + '/sendMessage?chat_id=' + bot_chatID + '&parse_mode=Markdown&text=' + bot_message
  
 	requests.get(send_text)	
 
 
 job_buffer = []
+
+
+# introduction 
+fix_price_filter = input("Fixed price lower bound to filter vacancies (enter the number): ") 
+lower_hour_price_filter = input("Lower price limit per hour to filter vacancies (enter the number): ") 
+upper_hour_price_filter = input("Upper price limit per hour to filter vacancies (enter the number): ") 
+
+fix_price_filter = int(fix_price_filter)
+lower_hour_price_filter = int(lower_hour_price_filter)
+upper_hour_price_filter = int(upper_hour_price_filter)
+
 
 while True:
 	
@@ -158,13 +168,13 @@ while True:
 			print('ok')
 			if len(money) == 2:
 				money_digit = float(price_str(money[1]))
-				row_1 = {'date': job_time_published_date, 'time': job_time_published_time, 'title': title_message, 
+				row_1 = {'date': job_time_published_date, 'time': job_time_published_time, 'title': title_message,
 						'message': cleaned_string, 'fix_price': np.nan, 'price_min': money[0], 'price_max': money[1]}
 				df = df.append(row_1, ignore_index=True)
 				df.to_csv("upwork_base.csv", index=False)
 				
 				print(money_digit)
-				if money_digit >= 30:
+				if money_digit >= lower_hour_price_filter:
 					bot_message = ("%s,  %s, %s, %s " % (title_message, money[0], money[1], cleaned_string))
 					#bot_message = "{0}, {1}, {2}, {3}".fomrat(title_message, money[0], money[1], cleaned_string)	
 					bot_sendtext(bot_message)
@@ -177,7 +187,7 @@ while True:
 				df.to_csv("upwork_base.csv", index=False)
 
 				money_digit = float(price_str(money[0]))
-				if money_digit > 500:
+				if money_digit > fix_price_filter:
 					bot_message = ("%s,  %s,  %s " % (title_message, money[0], cleaned_string))
 					bot_sendtext(bot_message)
 					
