@@ -194,7 +194,7 @@ while True:
 			if len(money) == 0:
 				row_3 = {'date': job_time_published_date, 'time': job_time_published_time, 'title': title_message, 
 						'message': cleaned_string, 'fix_price': np.nan, 'price_min': np.nan, 'price_max': np.nan}
-				df = df.append(row_2, ignore_index=True)
+				df = df.append(row_3, ignore_index=True)
 				df.to_csv("upwork_base.csv", index=False)
 					
 			else:
