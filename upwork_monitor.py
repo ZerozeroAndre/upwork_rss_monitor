@@ -3,8 +3,8 @@ import feedparser
 import html2text
 import re
 import re as regex
-from bs4 import BeautifulSoup          # For processing HTML
-from bs4 import BeautifulStoneSoup     # For processing XML
+from bs4 import BeautifulSoup          
+from bs4 import BeautifulStoneSoup     
 import bs4   
 import time  
 from termcolor import colored, cprint
@@ -62,7 +62,8 @@ def bot_sendtext(bot_message):
 	### Send text message
 	bot_token = ''
 	bot_chatID = ''
-	send_text = 'https://api.telegram.org/bot' + bot_token + '/sendMessage?chat_id=' + bot_chatID + '&parse_mode=Markdown&text=' + bot_message
+	send_text = 'https://api.telegram.org/bot' + bot_token + '/sendMessage?chat_id=' 
+				+ bot_chatID + '&parse_mode=Markdown&text=' + bot_message
  
 	requests.get(send_text)	
 
@@ -157,7 +158,8 @@ while True:
 			print('ok')
 			if len(money) == 2:
 				money_digit = float(price_str(money[1]))
-				row_1 = {'date': job_time_published_date, 'time': job_time_published_time, 'title': title_message, 'message': cleaned_string, 'fix_price': np.nan, 'price_min': money[0], 'price_max': money[1]}
+				row_1 = {'date': job_time_published_date, 'time': job_time_published_time, 'title': title_message, 
+						'message': cleaned_string, 'fix_price': np.nan, 'price_min': money[0], 'price_max': money[1]}
 				df = df.append(row_1, ignore_index=True)
 				df.to_csv("upwork_base.csv", index=False)
 				
@@ -169,7 +171,8 @@ while True:
 					
 
 			if len(money) == 1:
-				row_2 = {'date': job_time_published_date, 'time': job_time_published_time, 'title': title_message, 'message': cleaned_string, 'fix_price': money[0], 'price_min': np.nan, 'price_max': np.nan}
+				row_2 = {'date': job_time_published_date, 'time': job_time_published_time, 'title': title_message, 
+						'message': cleaned_string, 'fix_price': money[0], 'price_min': np.nan, 'price_max': np.nan}
 				df = df.append(row_2, ignore_index=True)
 				df.to_csv("upwork_base.csv", index=False)
 
@@ -179,7 +182,8 @@ while True:
 					bot_sendtext(bot_message)
 					
 			if len(money) == 0:
-				row_3 = {'date': job_time_published_date, 'time': job_time_published_time, 'title': title_message, 'message': cleaned_string, 'fix_price': np.nan, 'price_min': np.nan, 'price_max': np.nan}
+				row_3 = {'date': job_time_published_date, 'time': job_time_published_time, 'title': title_message, 
+						'message': cleaned_string, 'fix_price': np.nan, 'price_min': np.nan, 'price_max': np.nan}
 				df = df.append(row_2, ignore_index=True)
 				df.to_csv("upwork_base.csv", index=False)
 					
