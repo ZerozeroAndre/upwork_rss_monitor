@@ -20,10 +20,8 @@ import pandas as pd
 import keyword
 from nltk import word_tokenize
 
-
 import requests
 colorama.init()
-
 
 class bcolors:
     HEADER = '\033[95m'
@@ -35,13 +33,10 @@ class bcolors:
     BOLD = '\033[1m'
     UNDERLINE = '\033[4m'
 
-
-
 rss_url = ""
 
 h = html2text.HTML2Text()
 h.ignore_links = True
-
 
 def preclean_input_text(text):
   cleaned_text = regex.sub(r'[a-z]:\s', ' ', text, flags=re.IGNORECASE)
@@ -68,23 +63,18 @@ def bot_sendtext(bot_message):
  
 	requests.get(send_text)	
 
-
 job_buffer = []
-
 
 # introduction 
 fix_price_filter = input("Fixed price lower bound to filter vacancies (enter the number): ") 
 lower_hour_price_filter = input("Lower price limit per hour to filter vacancies (enter the number): ") 
 upper_hour_price_filter = input("Upper price limit per hour to filter vacancies (enter the number): ") 
+key_word_filter = input("Enter the keyword: ") 
 
 fix_price_filter = int(fix_price_filter)
 lower_hour_price_filter = int(lower_hour_price_filter)
 upper_hour_price_filter = int(upper_hour_price_filter)
-
-
-
-
-
+key_word_filter = key_word_filter.lower()
 
 while True:
 	
@@ -96,8 +86,6 @@ while True:
 		# Title 
 		title_message = h.handle(i['title'])[:-11]
 		title_message = title_message.upper()
-		
-		
 		
 		# Money 
 		soup = BeautifulSoup(''.join(h.handle(i['summary'])))
@@ -114,7 +102,6 @@ while True:
 			job_time_published_date = datetime.datetime.now().date()
 			job_time_published_time = datetime.datetime.now().time()
 			
-		
 		# Greenwich time 
 		tz = pytz.timezone('Etc/Greenwich')
 		Greenwich_now = datetime.datetime.now(tz)
@@ -136,7 +123,6 @@ while True:
 			cprint(new_notification, 'green')
 		else:
 			pass
-		
 		
 		print("Title")
 		#print("--------------------------------------------------")
@@ -166,9 +152,11 @@ while True:
 		tokens_title = word_tokenize(title_message)
 	
 		tokens.extend(tokens_title)
-		print(type(tokens))
-		print(tokens) 
+		tokens = [x.lower() for x in tokens]
 		
+		if key_word_filter in tokens:
+			print("The word " + key_word_filter + " was found") 
+
 		cprint(job_time_published_date, 'yellow')
 		cprint(job_time_published_time, 'yellow')
 		
@@ -179,7 +167,7 @@ while True:
 		
 		if title_message not in job_buffer:
 			job_buffer.append(title_message)
-			print('ok')
+	
 			if len(money) == 2:
 				money_digit = float(price_str(money[1]))
 				row_1 = {'date': job_time_published_date, 'time': job_time_published_time, 'title': title_message,
@@ -192,8 +180,7 @@ while True:
 					bot_message = ("%s,  %s, %s, %s " % (title_message, money[0], money[1], cleaned_string))
 					#bot_message = "{0}, {1}, {2}, {3}".fomrat(title_message, money[0], money[1], cleaned_string)	
 					bot_sendtext(bot_message)
-					
-
+				
 			if len(money) == 1:
 				row_2 = {'date': job_time_published_date, 'time': job_time_published_time, 'title': title_message, 
 						'message': cleaned_string, 'fix_price': money[0], 'price_min': np.nan, 'price_max': np.nan}
@@ -214,9 +201,7 @@ while True:
 			else:
 				pass
 		if title_message in job_buffer:
-
-			print("not ok")
 			pass 
- 
+			
 		print("_______________________________________________________________")
 		time.sleep(3)
